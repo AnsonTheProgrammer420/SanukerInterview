@@ -12,6 +12,7 @@ const resolvers = {
       return targetNode;
     },
   },
+
   NodeObject: {
     trigger: (node) => {
       console.log("node trigger");
@@ -21,13 +22,13 @@ const resolvers = {
       return node.trigger;
     },
     responses: (node) => {
-      console.log("node responses finding");
-      console.log(node.responses);
-      console.log(
-        responsesList.filter((response) =>
-          node.responses.includes(response._id)
-        )
-      );
+      //   console.log("node responses finding");
+      //   console.log(node.responses);
+      //   console.log(
+      //     responsesList.filter((response) =>
+      //       node.responses.includes(response._id)
+      //     )
+      //   );
       return responsesList.filter((response) =>
         node.responses.includes(response._id)
       );
@@ -37,25 +38,49 @@ const resolvers = {
     },
     actions: (node) => {
       // pre action/ action/ post acion
-      return actions.filter((action) => node.actionIds.includes(action._id));
+      let actionList = [];
+
+      if (node.preActions) actionList.push(...node.preActions.flat());
+      if (node.actions) actionList.push(...node.actions.flat());
+      if (node.postActions) actionList.push(...node.postActions.flat());
+
+      console.log(node.preActions, node.actions, node.postActions);
+      console.log("action list", actionList);
+      return actions.filter((action) => actionList.includes(action._id));
     },
-    // parents: (node) => {
-    //   return node.parentIds
-    //     .map((parentId) =>
-    //       nodeObjects.find((parent) => parent._id === parentId)
-    //     )
-    //     .filter((parent) => parent !== undefined);
-    // },
+    actionIds: (node) => {
+      let actionList = [];
+
+      if (node.preActions) actionList.push(...node.preActions.flat());
+      if (node.actions) actionList.push(...node.actions.flat());
+      if (node.postActions) actionList.push(...node.postActions.flat());
+      return actionList;
+    },
+    parents: (node) => {
+      //   console.log(
+      //     nodeObjects.filter((parent) =>
+      //       node.parents.includes(parent.compositeId)
+      //     )
+      //  );
+      return nodeObjects.filter((parent) =>
+        node.parents.includes(parent.compositeId)
+      );
+    },
+    parentIds: (node) => {
+      return node.parents;
+    },
   },
+
   Action: {
     resourceTemplate: (action) => {
       return (
         resourceTemplates.find(
-          (template) => template._id === action.resourceTemplateId
+          (template) => template._id == action.resourceTemplateId
         ) || null
       );
     },
   },
+
   Trigger: {
     resourceTemplate: (trigger) => {
       return (
@@ -67,22 +92,22 @@ const resolvers = {
   },
   Response: {
     platforms: (response) => {
-      return response.platforms; // Assume platforms are already populated in the response
+      return response.platforms ? response.platforms : null;
     },
   },
   ResponsePlatform: {
     localeGroups: (platform) => {
-      return platform.localeGroups; // Assume localeGroups are populated
+      return platform.localeGroups ? platform.localeGroup : null;
     },
   },
   ResponseLocaleGroup: {
     variations: (localeGroup) => {
-      return localeGroup.variations; // Assume variations are populated
+      return localeGroup.variations ? localeGroup.variations : null;
     },
   },
   ResponseVariation: {
     responses: (variation) => {
-      return variation.responses; // Assume responses are populated
+      return variation.responses ? variation.responses : null;
     },
   },
 };
