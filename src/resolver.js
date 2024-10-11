@@ -6,7 +6,11 @@ import triggers from "./trigger.json" assert { type: "json" };
 
 const resolvers = {
   Query: {
-    node: (_, { nodeId }) => {
+    node: (_, { nodeId }, context) => {
+      console.log("context", context);
+      if (!context.user) {
+        throw new Error("Unauthorized");
+      }
       console.log("node finding");
       let targetNode = nodeObjects.find((node) => node._id === nodeId) || null;
       return targetNode;
