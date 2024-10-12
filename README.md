@@ -2,6 +2,8 @@ token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3Mjg2NzYyNTN9.dXBStTR7hv
 how to run the server:
 1. download the file
 2. run npm start
+3. copy token from console 
+
 
 Auth:
 in graphql query header:
